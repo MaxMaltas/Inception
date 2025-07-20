@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  mariadb:
+    build: ./requirements/mariadb
+    image: mariadb
+    container_name: mariadb
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - wordpress_db:/var/lib/mysql
+    networks:
+      - inception
+
+  wordpress:
+    build: ./requirements/wordpress
+    image: wordpress
+    container_name: wordpress
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress_files:/var/www/html
+    networks:
+      - inception
+
+  nginx:
+    build: ./requirements/nginx
+    image: nginx
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "443:443"
+    volumes:
+      - wordpress_files:/var/www/html:ro
+    depends_on:
+      - wordpress
+    networks:
+      - inception
+
+#  redis:
+#    build:
+#      context: ./requirements/bonus/redis
+#    container_name: redis
+#    restart: always
+#    volumes:
+#      - redis_data:/data
+#    networks:
+#      - inception
+
+volumes:
+  wordpress_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/mmaltas-/data/mariadb
+
+  wordpress_files:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/mmaltas-/data/wordpress
+
+#  redis_data:
+
+networks:
+  inception:
+    name: inception-network
+    driver: bridge
