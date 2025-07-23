@@ -7,7 +7,7 @@ INIT_MARKER="/var/lib/mysql/.initialized"
 echo ${INIT_MARKER}
 
 if [ ! -f "$INIT_MARKER" ]; then
-	echo "> Iniciando base datos de MariaDB...AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa"
+	echo "> Iniciando base datos de MariaDB..."
 	mysql_install_db --user=mysql --basedir=/usr --ldata=/var/lib/mysql
 # Inicia servicio en segundo plano
 	mysqld_safe --datadir=/var/lib/mysql & #--bind-adress=0.0.0.0 &
@@ -24,7 +24,7 @@ if [ ! -f "$INIT_MARKER" ]; then
 
 	HOSTNAME=mariadb
 # Crear base de datos
-	echo "> Configurando base de datos BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+	echo "> Configurando base de datos..."
 
 	mysql -u root -h localhost <<-EOSQL # mysql -u root --socket=/run/mysqld/mysqld.sock <<-EOSQL
 	ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
@@ -34,7 +34,7 @@ if [ ! -f "$INIT_MARKER" ]; then
 	FLUSH PRIVILEGES;
 	EOSQL
 
-	echo "> MariaDB listo y configurado CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCc"
+	echo "> MariaDB listo y configurado "
 # mysql -e "CREATE DATABASE IF NOT EXIST \`${MYSQL_DATABASE}\`;"
 # mysql -e "CREATE USER IF NOT EXIST '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
 # mysql -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';"
@@ -50,7 +50,7 @@ if [ ! -f "$INIT_MARKER" ]; then
 	touch "${INIT_MARKER}"
 fi
 
-echo "Ejecuta mysql_safe en primer plano xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+echo "Ejecuta mysql_safe en primer plano "
 # Ejecutar mysql_safe
 exec mysqld_safe --datadir=/var/lib/mysql  #--bind-adress=0.0.0.0
 

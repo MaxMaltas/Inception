@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Actualizamos paquetes, anyadimos PHP-FPM y extensiones
 RUN apt update && apt upgrade -y && \
-apt install -y php php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-zip \
+apt install -y php php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-zip php-redis redis-tools default-mysql-client \
 wget unzip curl tar dumb-init && apt clean
 
 # Creamos directorio WordPress

@@ -34,12 +34,21 @@ fi
 if ! wp user get "$WP_USER" --field=ID --allow-root >/dev/null 2>&1; then
 	echo ">> Creando usuario lector..."
 	wp user create "$WP_USER" "$WP_USER_EMAIL" \
-		--user_pass="$WP_USER_PASSWORD" \
-		--role=subscriber \
+	--user_pass="$WP_USER_PASSWORD" \
+	--role=subscriber \
 		--allow-root
 else
 	echo ">> Usuario lector ya existe"
 fi
 
 echo ">> Usuarios creados correctamente."
+
+# Instalar plugin si no está ya
+if ! wp plugin is-installed redis-cache --allow-root; then
+	echo ">> Instalando plugin Redis..."	
+	wp plugin install redis-cache --activate --allow-root
+	wp redis enable --allow-root
+else
+	echo ">> pligin redis OK"
+fi
 

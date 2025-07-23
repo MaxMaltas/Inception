@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
     env_file: .env
     depends_on:
-      - mariadb
+      - redis
     volumes:
       - wordpress_files:/var/www/html
     networks:
@@ -39,15 +39,17 @@ services:
     networks:
       - inception
 
-#  redis:
-#    build:
-#      context: ./requirements/bonus/redis
-#    container_name: redis
-#    restart: always
+  redis:
+    build:
+      context: ./requirements/bonus/redis
+    container_name: redis
+    restart: always
+#    depends_on:
+#      - mariadb
+    networks:
+      - inception
 #    volumes:
 #      - redis_data:/data
-#    networks:
-#      - inception
 
 volumes:
   wordpress_db:

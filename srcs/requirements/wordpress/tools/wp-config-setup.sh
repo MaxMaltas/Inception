@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # configurar que si algun comando falla, termine el script
 set -e
 
@@ -23,20 +22,32 @@ sed -i "s/username_here/${MYSQL_USER}/" "$CONFIG_FILE"
 sed -i "s/password_here/${MYSQL_PASSWORD}/" "$CONFIG_FILE"
 sed -i "s/localhost/${MYSQL_HOST}/" "$CONFIG_FILE"
 
-# Insertamos claves unicas generadas desde WordPress API
-echo "> Insertando claves de autenticacion..."
-
+# Descargar claves SALT
+echo "> Descargando claves de autenticacion desde WordPress API..."
 SALT=$(curl -s https://api.wordpress.org/secret-key/1.1/salt/)
-sed -i "/AUTH_KEY/d" "$CONFIG_FILE"
-sed -i "/SECURE_AUTH_KEY/d" "$CONFIG_FILE"
-sed -i "/LOGGED_IN_KEY/d" "$CONFIG_FILE"
-sed -i "/NONCE_KEY/d" "$CONFIG_FILE"
-sed -i "/AUTH_SALT/d" "$CONFIG_FILE"
-sed -i "/SECURE_AUTH_SALT/d" "$CONFIG_FILE"
-sed -i "/LOGGED_IN_SALT/d" "$CONFIG_FILE"
-sed -i "/NONCE_SALT/d" "$CONFIG_FILE"
-printf '%s\n' "$SALT" >> "$CONFIG_FILE"
+
+# Eliminar defines duplicados o residuales
+sed -i '/define.(WP_CACHE\|WP_REDIS_HOST\|WP_REDIS_PORT\|WP_HOME\|WP_SITEURL\|FORCE_SSL_ADMIN\|COOKIE_DOMAIN)/d' "$CONFIG_FILE"
+sed -i '/define.(AUTH_KEY\|SECURE_AUTH_KEY\|LOGGED_IN_KEY\|NONCE_KEY\|AUTH_SALT\|SECURE_AUTH_SALT\|LOGGED_IN_SALT\|NONCE_SALT)/d' "$CONFIG_FILE"
+
+# Insertar todo justo antes del require_once
+awk -v domain="$DOMAIN_NAME" -v salt="$SALT" '
+/require_once ABSPATH/ {
+    print "// --- Configuración personalizada ---"
+    print "define('\''WP_CACHE'\'', true);"
+    print "define('\''WP_REDIS_HOST'\'', '\''redis'\'');"
+    print "define('\''WP_REDIS_PORT'\'', 6379);"
+    print "define('\''WP_HOME'\'', '\''https://" domain "'\'');"
+    print "define('\''WP_SITEURL'\'', '\''https://" domain "'\'');"
+    print "define('\''FORCE_SSL_ADMIN'\'', true);"
+    print "define('\''COOKIE_DOMAIN'\'', $_SERVER['\''HTTP_HOST'\'']);"
+    print ""
+    print "// --- Claves SALT generadas dinámicamente ---"
+    print salt
+    print ""
+}
+{ print }
+' "$CONFIG_FILE" > /tmp/wp-config.tmp && mv /tmp/wp-config.tmp "$CONFIG_FILE"
 
 echo "> wp-config.php generado correctamente"
-
 
