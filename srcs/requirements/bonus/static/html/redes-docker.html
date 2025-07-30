@@ -1,0 +1,75 @@
+<html><head><meta charset="utf-8"/><title>🌐 9. Redes Docker</title>
+        <link rel="stylesheet" href="style.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    </head><body><a href="index.html" style="display:inline-block;margin-bottom:20px;padding:10px 15px;background:#2980b9;color:white;text-decoration:none;border-radius:5px;">⬅ Volver al índice</a>
+<h2>🧠 ¿Qué es una red en Docker?</h2>
+<p>Una <strong>red bridge</strong> permite que múltiples contenedores se comuniquen entre ellos <strong>por nombre de servicio</strong>, como si estuvieran en una red local privada.</p>
+<p>Docker crea por defecto:
+- Una red bridge predeterminada (<code>bridge</code>)
+- Una red host (<code>host</code>) y <code>none</code> (no usar en Inception)
+- Pero es mejor <strong>crear tu propia red personalizada</strong>, para mantener el control.</p>
+<hr/>
+<h3>📦 Ejemplo en <code>docker-compose.yml</code></h3>
+<div class="codehilite">
+<pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">wordpress</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp-net</span>
+<span class="w">  </span><span class="nt">mariadb</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp-net</span>
+
+<span class="nt">networks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">wp-net</span><span class="p">:</span>
+</code></pre>
+</div>
+<p>Esto crea una red llamada <code>wp-net</code>, donde ambos contenedores podrán hablar entre sí usando su nombre de servicio:</p>
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># Dentro del contenedor WordPress</span>
+ping<span class="w"> </span>mariadb
+</code></pre>
+</div>
+<h6>✅ Muy importante: no se necesita IP fija ni localhost. Solo usar el nombre de servicio como hostname.</h6>
+<hr/>
+<h3>🧠 Redes en Inception</h3>
+<ul>
+<li>Crea una red para toda la infraestructura, por ejemplo <code>inception-net</code>.</li>
+<li>Todos los servicios deben estar conectados a ella.</li>
+<li>No debes usar --link, network: host, ni otras prácticas obsoletas.</li>
+</ul>
+<h3>✅ Comandos útiles</h3>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>network<span class="w"> </span>ls<span class="w">             </span><span class="c1"># Ver redes activas</span>
+docker<span class="w"> </span>network<span class="w"> </span>inspect<span class="w"> </span>X<span class="w">     </span><span class="c1"># Ver detalles de una red</span>
+docker<span class="w"> </span>network<span class="w"> </span>rm<span class="w"> </span>X<span class="w">          </span><span class="c1"># Eliminar red personalizada</span>
+</code></pre>
+</div>
+<hr/>
+<h2>🧭 Buenas prácticas</h2>
+<table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Recomendación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Volúmenes</td>
+<td>Siempre usar nombrados (<code>db-data</code>, <code>wp-data</code>...)</td>
+</tr>
+<tr>
+<td>Redes</td>
+<td>Siempre usar una red personalizada y común para los servicios</td>
+</tr>
+<tr>
+<td>Seguridad</td>
+<td>No exponer redes innecesarias al exterior</td>
+</tr>
+<tr>
+<td>Portabilidad</td>
+<td>Nunca uses rutas absolutas del host (bind mounts)</td>
+</tr>
+</tbody>
+</table>
+</body></html>

@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <meta charset="utf-8"/><title>🧠 1. ¿Qué es Docker?</title>
+        <link rel="stylesheet" href="style.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    </head>
+<body><a href="index.html" style="display:inline-block;margin-bottom:20px;padding:10px 15px;background:#2980b9;color:white;text-decoration:none;border-radius:5px;">⬅ Volver al índice</a>
+<h3>🔹 Concepto:</h3>
+<p><strong>Docker</strong> es una plataforma de virtualización ligera basada en contenedores. En lugar de virtualizar hardware completo (como hacen las máquinas virtuales), Docker utiliza el <strong>sistema operativo del host</strong> para ejecutar múltiples entornos aislados: los <strong>contenedores</strong>.</p>
+<hr/>
+<h3>⚙️ Diferencia entre VM y contenedor:</h3>
+<table>
+<thead>
+<tr>
+<th>Característica</th>
+<th>Máquina Virtual</th>
+<th>Contenedor (Docker)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sistema operativo</td>
+<td>Incluye uno propio (kernel completo)</td>
+<td>Comparte el kernel del host</td>
+</tr>
+<tr>
+<td>Arranque</td>
+<td>Lento, como un PC completo</td>
+<td>Muy rápido, en segundos</td>
+</tr>
+<tr>
+<td>Peso</td>
+<td>Pesado (GBs)</td>
+<td>Ligero (MBs)</td>
+</tr>
+<tr>
+<td>Aislamiento</td>
+<td>Muy fuerte (virtualización completa)</td>
+<td>Aislado a nivel de proceso y red</td>
+</tr>
+<tr>
+<td>Recursos</td>
+<td>Más consumo de CPU y RAM</td>
+<td>Más eficiente</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>🧠 Mini resumen: ¿Cómo funcionan los sistemas operativos base en Docker?</h2>
+<hr/>
+<h3>🔧 Docker <strong>NO virtualiza</strong> un sistema operativo completo</h3>
+<ul>
+<li>Docker no crea máquinas virtuales (como VirtualBox o KVM), sino <strong>contenedores que comparten el kernel del host</strong>.</li>
+<li>Cada contenedor se ejecuta como un <strong>proceso aislado</strong> usando namespaces y cgroups, con su propio sistema de archivos.</li>
+</ul>
+<hr/>
+<h3>📦 ¿Qué contiene una imagen Docker?</h3>
+<p>Una imagen basada en <code>FROM debian</code> o <code>FROM alpine</code> <strong>no incluye un kernel</strong>, solo:</p>
+<ul>
+<li>El <strong>sistema de archivos</strong> raíz (ej: <code>/bin</code>, <code>/usr</code>, <code>/lib</code>, etc.)</li>
+<li>Las herramientas básicas del sistema (<code>bash</code>, <code>apt</code>, <code>apk</code>, etc.)</li>
+<li>Variables de entorno y configuraciones típicas de ese OS</li>
+</ul>
+<p>➡️ El kernel sigue siendo <strong>el del host</strong>, no importa si usas Fedora, Ubuntu o Windows (via WSL2).</p>
+<hr/>
+<h3>🏗️ Puedes usar diferentes sistemas base en tu proyecto</h3>
+<ul>
+<li>Cada servicio de tu <code>docker-compose.yml</code> puede tener un <code>Dockerfile</code> con un sistema base distinto: <code>alpine</code>, <code>debian</code>, <code>ubuntu</code>, etc.</li>
+<li><strong>Totalmente compatible</strong> mientras todos estén en arquitecturas compatibles (x86_64).</li>
+</ul>
+<hr/>
+<h3>🪟 ¿Y en Windows?</h3>
+<ul>
+<li>Docker Desktop en Windows usa <strong>WSL2</strong> para ejecutar contenedores Linux.</li>
+<li>Puedes usar <code>FROM debian</code>, <code>FROM alpine</code>, etc., sin problema.</li>
+<li>No puedes mezclar contenedores <strong>Windows</strong> y <strong>Linux</strong> en el mismo <code>docker-compose.yml</code>.</li>
+</ul>
+<hr/>
+<h3>✅ Conclusiones clave</h3>
+<table>
+<thead>
+<tr>
+<th>Pregunta</th>
+<th>Respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>¿Docker instala un sistema operativo completo?</td>
+<td>❌ No</td>
+</tr>
+<tr>
+<td>¿Cada imagen incluye un kernel?</td>
+<td>❌ No</td>
+</tr>
+<tr>
+<td>¿El kernel es el del host?</td>
+<td>✅ Sí</td>
+</tr>
+<tr>
+<td>¿Puedo usar <code>FROM alpine</code> en Fedora o Windows?</td>
+<td>✅ Sí</td>
+</tr>
+<tr>
+<td>¿Puedo usar distintos OS base en un mismo <code>docker-compose.yml</code>?</td>
+<td>✅ Sí</td>
+</tr>
+</tbody>
+</table>
+</body></html>

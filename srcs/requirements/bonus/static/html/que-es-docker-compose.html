@@ -1,0 +1,145 @@
+<html><head><meta charset="utf-8"/><title>🛠️ 6. ¿Qué es Docker Compose?</title>
+        <link rel="stylesheet" href="style.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    </head><body><a href="index.html" style="display:inline-block;margin-bottom:20px;padding:10px 15px;background:#2980b9;color:white;text-decoration:none;border-radius:5px;">⬅ Volver al índice</a>
+<h2>🧠 ¿Qué es Docker Compose?</h2>
+<p><strong>Docker Compose</strong> es una herramienta que permite:</p>
+<ul>
+<li>Declarar todos tus servicios (contenedores), redes, volúmenes y variables en un solo archivo.</li>
+<li>Automatizar el orden de creación de cada contenedor.</li>
+<li>Ejecutar todos los servicios con un simple:
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>--build<span class="w"> </span>
+</code></pre>
+</div></li>
+</ul>
+<hr/>
+<h2>📁 Estructura de un proyecto con Compose</h2>
+<div class="codehilite">
+<pre><span></span><code>mi-proyecto/
+├──<span class="w"> </span>docker-compose.yml
+├──<span class="w"> </span>.env
+└──<span class="w"> </span>nginx/
+<span class="w">    </span>└──<span class="w"> </span>Dockerfile
+└──<span class="w"> </span>mariadb/
+<span class="w">    </span>└──<span class="w"> </span>Dockerfile
+└──<span class="w"> </span>wordpress/
+<span class="w">    </span>└──<span class="w"> </span>Dockerfile
+</code></pre>
+</div>
+<hr/>
+<h2>📜 Estructura de un <code>docker-compose.yml</code></h2>
+<div class="codehilite">
+<pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">'3.8'</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nginx</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./nginx</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"443:443"</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-data:/var/www/html</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wordpress</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp-net</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+
+<span class="w">  </span><span class="nt">wordpress</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./wordpress</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp-data:/var/www/html</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mariadb</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp-net</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WP_DB_HOST=mariadb</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WP_DB_USER=${MYSQL_USER}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WP_DB_PASSWORD=${MYSQL_PASSWORD}</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+
+<span class="w">  </span><span class="nt">mariadb</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./mariadb</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db-data:/var/lib/mysql</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wp-net</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MYSQL_DATABASE=wordpress</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">always</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nginx-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">wp-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">db-data</span><span class="p">:</span>
+
+<span class="nt">networks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">wp-net</span><span class="p">:</span>
+</code></pre>
+</div>
+<hr/>
+<h2>🔍 Explicación clave</h2>
+<h3>🔹 <code>services:</code></h3>
+<pre><code>Cada contenedor es un “servicio”. Aquí defines cómo se construye y configura.
+</code></pre>
+<h3>🔹 <code>build:</code></h3>
+<pre><code>Ruta al directorio donde está el `Dockerfile` del servicio.
+</code></pre>
+<h3>🔹 <code>ports:</code></h3>
+<pre><code>Mapeo de puertos: `"HOST:CONTENEDOR"`.
+</code></pre>
+<h3>🔹 <code>volumes:</code></h3>
+<pre><code>Almacenan datos persistentes compartidos.
+</code></pre>
+<h3>🔹 <code>depends_on:</code></h3>
+<pre><code>Orden lógico de arranque (WordPress depende de MariaDB, por ejemplo).
+</code></pre>
+<h3>🔹 <code>networks:</code></h3>
+<pre><code>Todos los servicios se conectan a la misma red privada (`wp-net`), así pueden comunicarse entre ellos.
+</code></pre>
+<h3>🔹 <code>restart: always</code></h3>
+<pre><code>Reinicia el contenedor si falla o al reiniciar el sistema.
+</code></pre>
+<hr/>
+<h3>🛠️ Uso de variables con <code>.env</code></h3>
+<p>Archivo <code>.env</code> en el mismo directorio que el <code>docker-compose.yml</code>:</p>
+<pre><code>MYSQL_USER=wpuser
+MYSQL_PASSWORD=supersecret
+MYSQL_ROOT_PASSWORD=rootsecret
+</code></pre>
+<p>Estas variables se referencian con <code>${VARIABLE}</code> dentro del archivo YAML.</p>
+<hr/>
+<h2>✅ Comandos esenciales de Docker Compose</h2>
+<table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>Función</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker compose up --build</code>|Construye e inicia todos los servicios</td>
+</tr>
+<tr>
+<td><code>docker compose down</code>|Detiene y elimina contenedores, redes y volúmenes anónimos</td>
+</tr>
+<tr>
+<td><code>docker compose logs -f</code>|Muestra logs en tiempo real</td>
+</tr>
+<tr>
+<td><code>docker compose exec &lt;servicio&gt; bash</code>|Entra a un contenedor para debug</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>🧭 Beneficios de Compose en Inception</h2>
+<ul>
+<li>Organiza todos los servicios y su configuración en un solo punto.</li>
+<li>Automatiza la creación de volúmenes, redes, contenedores.</li>
+<li>Es fácil de versionar con Git.</li>
+<li>Escalable y mantenible.</li>
+</ul>
+</body></html>

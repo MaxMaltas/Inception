@@ -1,0 +1,131 @@
+<html>
+<head>
+    <meta charset="utf-8"/><title>🧪 7. Comandos esenciales de Docker Compose</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body><a href="index.html" style="display:inline-block;margin-bottom:20px;padding:10px 15px;background:#2980b9;color:white;text-decoration:none;border-radius:5px;">⬅ Volver al índice</a>
+<h2>🧰 Comandos clave de Docker Compose</h2>
+<p>Una vez tienes un <code>docker-compose.yml</code> definido, puedes <strong>gestionar toda tu infraestructura con una sola línea</strong>. Aquí van los comandos más importantes:</p>
+<hr/>
+<h3>▶️ Levantar los servicios</h3>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up
+</code></pre>
+</div>
+<ul>
+<li>Levanta todos los servicios definidos en <code>docker-compose.yml</code>.</li>
+<li>Si ya existen las imágenes, las usa.</li>
+<li>Si no existen, te lanza un error.</li>
+</ul>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-build
+</code></pre>
+</div>
+<ul>
+<li><strong>Fuerza la reconstrucción</strong> de todas las imágenes antes de levantar los contenedores.</li>
+<li>Útil cuando cambias algo en un Dockerfile.</li>
+</ul>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre>
+</div>
+<ul>
+<li>Levanta los servicios en segundo plano (“detached”).</li>
+</ul>
+<hr/>
+<h3>⛔ Detener y eliminar los servicios</h3>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>down
+</code></pre>
+</div>
+<p>Detiene y elimina:
+- Contenedores
+- Redes personalizadas creadas por Compose
+- Volúmenes anónimos (¡no los que declaraste con nombre propio!)</p>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span>--volumes
+</code></pre>
+</div>
+<ul>
+<li>También borra los volúmenes nombrados.<br/>
+⚠️ Ten cuidado: <strong>esto borra datos persistentes</strong>, como bases de datos.</li>
+</ul>
+<hr/>
+<h3>🪵 Ver logs</h3>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>logs
+</code></pre>
+</div>
+<ul>
+<li>Muestra los logs de todos los servicios.</li>
+</ul>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>-f
+</code></pre>
+</div>
+<ul>
+<li>Sigue los logs en tiempo real (<code>-f = follow</code>).</li>
+</ul>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>&lt;servicio&gt;<span class="sb">`</span>
+</code></pre>
+</div>
+<ul>
+<li>Logs de un solo servicio, por ejemplo: mariadb, nginx.</li>
+</ul>
+<hr/>
+<h2>🛠️ Acceder a un contenedor</h2>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;servicio&gt;<span class="w"> </span>bash<span class="w"> </span><span class="c1">#sh en alpine u otros SO sin bash</span>
+</code></pre>
+</div>
+<ul>
+<li>Entra al contenedor con una shell interactiva.</li>
+</ul>
+<hr/>
+<h3>📋 Ver estado de los servicios</h3>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>ps
+</code></pre>
+</div>
+<ul>
+<li>Muestra contenedores activos y su estado.</li>
+</ul>
+<hr/>
+<h2>🧠 Tipos de errores comunes al ejecutar <code>docker compose up</code></h2>
+<table>
+<thead>
+<tr>
+<th>Error</th>
+<th>Posible causa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Cannot connect to database</code>|MariaDB no ha terminado de iniciar → usar <code>depends_on</code></td>
+</tr>
+<tr>
+<td><code>connection refused</code> entre servicios</td>
+<td>Faltan redes, nombres mal escritos</td>
+</tr>
+<tr>
+<td>Variables de entorno vacías</td>
+<td><code>.env</code> mal referenciado o no encontrado</td>
+</tr>
+<tr>
+<td>Permisos denegados</td>
+<td>Volúmenes mal montados, UID/GID incompatibles</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>🧭 Buenas prácticas</h2>
+<ul>
+<li>Siempre usa <code>--build</code> después de modificar un Dockerfile.</li>
+<li>Usa <code>-d</code> si no quieres que se bloqueen tus terminales.</li>
+<li>Usa <code>logs -f</code> para ver en tiempo real cómo arranca cada servicio.</li>
+<li>Siempre define <code>restart: always</code> en los servicios de producción.</li>
+<li>Usa <code>docker compose exec</code> para <strong>debuggear</strong> desde dentro del contenedor.</li>
+</ul>
+</body></html>

@@ -1,0 +1,214 @@
+<html><head><meta charset="utf-8"/><title>🛠️ 4. Crear Dockerfiles</title>
+        <link rel="stylesheet" href="style.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    </head><body><a href="index.html" style="display:inline-block;margin-bottom:20px;padding:10px 15px;background:#2980b9;color:white;text-decoration:none;border-radius:5px;">⬅ Volver al índice</a><h2>🧱 ¿Qué es un Dockerfile?</h2>
+<p>Un <strong>Dockerfile</strong> es un archivo de texto plano con instrucciones paso a paso que le dicen a Docker cómo construir una imagen.</p>
+<blockquote>
+<p>Es como una receta para preparar un entorno aislado con todo lo necesario: sistema operativo, programas, configuraciones, etc.</p>
+</blockquote>
+<hr/>
+<h2>📃 Estructura básica de un Dockerfile</h2>
+<p>Veamos las instrucciones más comunes, con explicaciones claras:</p>
+<table>
+<thead>
+<tr>
+<th>Instrucción</th>
+<th>¿Qué hace?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FROM</code>|Define la <strong>imagen base</strong>. Ej: <code>FROM alpine</code></td>
+</tr>
+<tr>
+<td><code>RUN</code>|Ejecuta un comando durante la construcción. Ej: <code>RUN apt update &amp;&amp; apt install nginx</code></td>
+</tr>
+<tr>
+<td><code>COPY</code>|Copia archivos desde tu máquina al contenedor. Ej: <code>COPY index.html /var/www/html</code></td>
+</tr>
+<tr>
+<td><code>WORKDIR</code>|Define el directorio de trabajo dentro del contenedor.</td>
+</tr>
+<tr>
+<td><code>CMD</code>|Comando por defecto que se ejecuta cuando se inicia el contenedor.</td>
+</tr>
+<tr>
+<td><code>ENTRYPOINT</code>|Similar a <code>CMD</code>, pero más rígido: no se sobrescribe fácilmente.</td>
+</tr>
+<tr>
+<td><code>EXPOSE</code>|Documenta que el contenedor usa un puerto (no abre puertos realmente).</td>
+</tr>
+<tr>
+<td><code>ENV</code>|Define variables de entorno (como contraseñas o configuraciones).</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h3>🧪 Ejemplo simple de Dockerfile</h3>
+<div class="codehilite">
+<pre><span></span><code><span class="c"># Imagen base</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">alpine</span>
+
+<span class="c"># Instalar un paquete</span>
+<span class="k">RUN</span><span class="w"> </span>apk<span class="w"> </span>add<span class="w"> </span>--no-cache<span class="w"> </span>nginx
+
+<span class="c"># Copiar config personalizada</span>
+<span class="k">COPY</span><span class="w"> </span>nginx.conf<span class="w"> </span>/etc/nginx/nginx.conf
+
+<span class="c"># Puerto que usara</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">80</span>
+
+<span class="c"># Comando para arrancar el servidor</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">"nginx"</span><span class="p">,</span><span class="w"> </span><span class="s2">"-g"</span><span class="p">,</span><span class="w"> </span><span class="s2">"daemon off;"</span><span class="p">]</span>
+</code></pre>
+</div>
+<h3>🔥 ¿Qué hace este Dockerfile?</h3>
+<ol>
+<li>Usa <code>alpine</code> como base (ligera y rápida).</li>
+<li>Instala <code>nginx</code>.</li>
+<li>Copia tu propia configuración (<code>nginx.conf</code>).</li>
+<li>Expone el puerto 80 (no lo abre, solo lo documenta).</li>
+<li>Lanza el proceso <code>nginx</code> en primer plano (como recomienda Docker: sin daemon en background).</li>
+</ol>
+<hr/>
+<h3>💡 Buenas prácticas para Inception</h3>
+<ul>
+<li><strong>No usar <code>tail -f</code>, <code>sleep infinity</code> ni <code>while true</code></strong> como <code>CMD</code>.</li>
+<li>Asegúrate de que tu proceso principal (como <code>nginx</code> o <code>php-fpm</code>) <strong>no se muera</strong>.</li>
+<li>Nunca pongas contraseñas directamente en el Dockerfile → usa variables de entorno o <code>secrets</code>.</li>
+<li>Usa imágenes base <strong>oficiales y ligeras</strong>, como <code>alpine</code> o <code>debian</code>.</li>
+</ul>
+<h2>🛑 1. ¿Por qué <strong>no debes usar procesos infinitos</strong> en contenedores Docker?</h2>
+<h3>🎯 Contexto:</h3>
+<p>Muchas personas que empiezan con Docker intentan que un contenedor “siga vivo” usando comandos como:</p>
+<div class="codehilite">
+<pre><span></span><code>CMD<span class="w"> </span><span class="o">[</span><span class="s2">"tail"</span>,<span class="w"> </span><span class="s2">"-f"</span>,<span class="w"> </span><span class="s2">"/dev/null"</span><span class="o">]</span>
+<span class="c1"># o</span>
+CMD<span class="w"> </span><span class="o">[</span><span class="s2">"sleep"</span>,<span class="w"> </span><span class="s2">"infinity"</span><span class="o">]</span>
+<span class="c1"># o incluso</span>
+<span class="k">while</span><span class="w"> </span>true<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre>
+</div>
+<p>Esto parece funcionar, porque <strong>mantiene el contenedor “vivo”</strong>, pero no es la forma correcta de hacerlo.</p>
+<hr/>
+<h3>❌ Problemas de este enfoque:</h3>
+<ol>
+<li><strong>Docker espera que el proceso principal del contenedor sea útil</strong>, es decir, que haga el trabajo que se supone que debe hacer (por ejemplo: servir NGINX, ejecutar PHP, etc.).</li>
+<li>Al usar un “proceso infinito vacío”, estás manteniendo el contenedor vivo sin motivo.<br/>
+→ Esto <strong>rompe la filosofía de Docker</strong>: un contenedor debe tener un propósito claro y autocontenible.</li>
+<li>Estos comandos <strong>no gestionan correctamente señales del sistema</strong>, como <code>SIGTERM</code>, lo cual impide un cierre limpio del contenedor (te explico esto en el punto 3 de PID 1).</li>
+<li>En proyectos como <strong>Inception</strong>, este tipo de trampas son penalizadas directamente en la corrección.</li>
+</ol>
+<hr/>
+<h3>✅ Solución:</h3>
+<ul>
+<li>Asegúrate de que el <strong>proceso real de tu servicio sea el que se ejecute como PID 1</strong>.<br/>
+   Por ejemplo, en NGINX:
+``` dockerfile
+CMD ["nginx", "-g", "daemon off;"]</li>
+</ul>
+<pre><code>&gt; `daemon off` hace que el proceso principal de NGINX no se ponga en segundo plano (como daemon), lo que le permite quedarse en primer plano y funcionar bien con Docker.
+
+---
+## 🔐 2. ¿Por qué **no se deben incluir contraseñas en el Dockerfile**?
+
+### 🎯 Contexto:
+
+En tu proyecto, tendrás que pasar datos sensibles a tus contenedores (como contraseñas de la base de datos). Podrías pensar en ponerlas directamente así:
+``` Dockerfile
+ENV MYSQL_ROOT_PASSWORD=supersecreta
+</code></pre>
+<p>Pero esto <strong>es un fallo grave de seguridad</strong>.</p>
+<hr/>
+<h3>❌ Problemas de seguridad:</h3>
+<ol>
+<li><strong>Todo lo que pongas en el Dockerfile queda guardado en la imagen final</strong>.<br/>
+Cualquiera con acceso a la imagen puede ver esas contraseñas:</li>
+</ol>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span><span class="nb">history</span><span class="w"> </span>--no-trunc<span class="w"> </span>tu-imagen
+</code></pre>
+</div>
+<ol start="2">
+<li>Si subes tu repositorio a GitHub o GitLab por error, ¡estarías exponiendo credenciales!</li>
+<li>Las variables definidas con <code>ENV</code> también <strong>quedan visibles en tiempo de ejecución</strong> (<code>docker inspect</code> o <code>printenv</code>), así que debes ser selectivo.</li>
+</ol>
+<hr/>
+<h3>✅ Solución:</h3>
+<ol>
+<li><strong>Usar archivos <code>.env</code></strong> que estén ignorados por Git (<code>.gitignore</code>).</li>
+<li><strong>Usar <code>secrets</code> o <code>volúmenes</code></strong> para montar archivos de texto que contengan las contraseñas.</li>
+<li><strong>Pasar variables en tiempo de ejecución</strong>, no en el Dockerfile:</li>
+</ol>
+<div class="codehilite">
+<pre><span></span><code><span class="c1"># docker-compose.yml</span>
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mariadb</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./mariadb</span>
+<span class="w">    </span><span class="nt">env_file</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.env</span>
+</code></pre>
+</div>
+<hr/>
+<h2>🧠 3. ¿Qué es el <strong>PID 1</strong> y por qué importa tanto en Docker?</h2>
+<h3>🔢 ¿Qué es un PID?</h3>
+<ul>
+<li>PID = Process ID = número de identificación que le da el sistema operativo a un proceso.</li>
+<li>En Linux, el <strong>proceso 1 (PID 1)</strong> es <strong>el proceso raíz de cualquier sistema</strong>, el primero que se lanza, y <strong>todos los demás dependen de él</strong>.</li>
+</ul>
+<hr/>
+<h3>📦 En Docker:</h3>
+<p>Cuando lanzas un contenedor, el proceso que se ejecuta desde <code>CMD</code> o <code>ENTRYPOINT</code> se convierte en <strong>PID 1 dentro del contenedor</strong>.</p>
+<hr/>
+<h3>⚠️ ¿Qué responsabilidades tiene PID 1?</h3>
+<ol>
+<li><strong>Captura y maneja señales del sistema</strong>: como <code>SIGINT</code>, <code>SIGTERM</code>, <code>SIGHUP</code>, que se usan para parar o reiniciar el contenedor.</li>
+<li><strong>Recolecta procesos zombis</strong>: si el PID 1 no maneja correctamente a los procesos hijos que mueren, quedan “zombies” y saturan el sistema.</li>
+<li><strong>Define el ciclo de vida del contenedor</strong>: si PID 1 muere, el contenedor se para inmediatamente.</li>
+</ol>
+<hr/>
+<h3>❌ Problemas si no usas bien PID 1:</h3>
+<ul>
+<li>Si pones un script como <code>bash</code> o <code>tail -f</code> como proceso principal, este <strong>no maneja bien señales</strong> ni recolección de procesos.</li>
+<li>Esto puede hacer que el contenedor <strong>no se detenga correctamente</strong>, o que se queden procesos huérfanos/zombis dentro.</li>
+<li>También puede interferir con Docker al reiniciar servicios o cuando haces <code>docker stop</code>.</li>
+</ul>
+<hr/>
+<h3>✅ Solución:</h3>
+<ul>
+<li>Ejecuta directamente el proceso principal (como <code>nginx</code>, <code>php-fpm</code>, etc.) como <strong>proceso raíz</strong> del contenedor.</li>
+<li>Si realmente necesitas un script como PID 1, asegúrate de usar una herramienta como <a href="https://github.com/krallin/tini"><code>tini</code></a> que actúe como un buen PID 1.
+``` dockerfile
+ENTRYPOINT [\"tini\", \"--\"]\nCMD [\"my-service\"]</li>
+</ul>
+<pre><code>
+---
+## 🧭 Conclusión
+
+| Problema             | Causa                                       | Solución correcta                                                |
+| -------------------- | ------------------------------------------- | ---------------------------------------------------------------- |
+| Procesos infinitos   | Mantener vivo el contenedor artificialmente | Ejecutar el proceso real del servicio como `CMD`                 |
+| Contraseñas visibles | Variables dentro del Dockerfile             | Usar `.env`, `secrets`, o pasar variables en tiempo de ejecución |
+| Mal uso de PID 1     | Usar bash o tail como proceso raíz          | Usar directamente el servicio o tini para manejar procesos       |
+
+---
+### 🛠️ ¿Cómo se construye una imagen?
+
+Una vez creado tu Dockerfile, lo compilas con:
+``` bash
+docker build -t mi-nginx-personalizado .
+</code></pre>
+<ul>
+<li><code>-t</code>: asigna un nombre a tu imagen.</li>
+<li><code>.</code>: indica que debe buscar el <code>Dockerfile</code> en el directorio actual.</li>
+</ul>
+<hr/>
+<h3>🧪 ¿Y cómo la pruebas?</h3>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:80<span class="w"> </span>mi-nginx-personalizado
+</code></pre>
+</div>
+<ul>
+<li>Esto lanza un contenedor a partir de la imagen que tú mismo creaste.</li>
+</ul>
+</body></html>

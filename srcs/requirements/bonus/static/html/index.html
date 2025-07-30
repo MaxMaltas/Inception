@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html lang="" xml:lang="" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8"/>
+<meta content="pandoc" name="generator"/>
+<meta content="width=device-width, initial-scale=1.0, user-scalable=yes" name="viewport"/>
+<title>🐳 Bloque 1 Fundamentos de Docker</title>
+<link rel="stylesheet" href="style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">🐳 Fundamentos de Docker</h1>
+</header>
+<h3 id="qué-es-docker"><a class="wikilink" href="que-es-docker.html">🧠 1. ¿Qué es Docker?</a></h3>
+<ul>
+<li>Contenedores vs Máquinas Virtuales.</li>
+<li>¿Por qué usar Docker?</li>
+<li>Arquitectura: Cliente, Demonio, Imágenes, Contenedores, Volúmenes y
+Redes.</li>
+</ul>
+<h3 id="primeros-pasos-con-docker"><a class="wikilink" href="primeros-pasos.html">🧪 2. Primeros
+pasos con Docker</a></h3>
+<ul>
+<li>Instalar Docker y Docker Compose.</li>
+<li>Comandos básicos:
+<ul>
+<li><code>docker ps</code>, <code>docker images</code>,
+<code>docker run</code>, <code>docker stop</code>,
+<code>docker rm</code>, <code>docker exec</code>,
+<code>docker logs</code>.</li>
+</ul></li>
+<li>Crear tu primer contenedor (por ejemplo, <code>hello-world</code> o
+<code>nginx</code>).</li>
+</ul>
+<h3 id="imágenes-y-dockerhub"><a class="wikilink" href="imagenes-dockerhub.html">📦 3. Imágenes y DockerHub</a></h3>
+<ul>
+<li>¿Qué es una imagen Docker?</li>
+<li>Diferencia entre imagen y contenedor.</li>
+<li>Buscar imágenes en DockerHub (aunque en Inception no puedes usarlas,
+debes entender cómo funciona).</li>
+</ul>
+<hr/>
+<h2 id="bloque-2-dockerfiles-y-buenas-prácticas">🔹 Bloque 2:
+Dockerfiles y Buenas Prácticas</h2>
+<h3 id="crear-dockerfiles"><a class="wikilink" href="crear-dockerfiles.html">🛠️ 4. Crear Dockerfiles</a></h3>
+<ul>
+<li>Sintaxis básica de un Dockerfile.</li>
+<li>Comandos importantes: <code>FROM</code>, <code>RUN</code>,
+<code>COPY</code>, <code>WORKDIR</code>, <code>CMD</code>,
+<code>ENTRYPOINT</code>, <code>EXPOSE</code>, <code>ENV</code>.</li>
+<li>Buenas prácticas:
+<ul>
+<li>No usar procesos infinitos.</li>
+<li>No poner contraseñas dentro del Dockerfile.</li>
+<li>Entender el rol de <code>PID 1</code>. ### 5. Construcción de
+imágenes personalizadas</li>
+</ul></li>
+<li><code>docker build -t nombre .</code></li>
+<li>Probar imágenes propias con <code>docker run</code>.</li>
+</ul>
+<hr/>
+<h2 id="bloque-3-docker-compose">🔹 Bloque 3: Docker Compose</h2>
+<h3 id="qué-es-docker-compose"><a class="wikilink" href="que-es-docker-compose.html">🛠️ 6. ¿Qué es Docker Compose?</a></h3>
+<ul>
+<li>Ventajas de definir múltiples servicios.</li>
+<li>Sintaxis del archivo <code>docker-compose.yml</code>.</li>
+<li>Estructura básica: <code>services</code>, <code>build</code>,
+<code>volumes</code>, <code>networks</code>, <code>env_file</code>,
+<code>depends_on</code>, <code>restart</code>.</li>
+</ul>
+<h3 id="comandos-esenciales-de-docker-compose"><a class="wikilink" href="comandos-compose.html">🧪
+7. Comandos esenciales de Docker Compose</a></h3>
+<ul>
+<li><code>docker-compose up --build</code></li>
+<li><code>docker-compose down</code></li>
+<li><code>docker-compose logs -f</code></li>
+<li><code>docker-compose exec nombre_servicio bash</code></li>
+</ul>
+<hr/>
+<h2 id="bloque-4-volúmenes-redes-y-variables">🔹 Bloque 4: Volúmenes,
+Redes y Variables</h2>
+<h3 id="volúmenes-docker"><a class="wikilink" href="volumenes-docker.html">💾 8. Volúmenes Docker</a></h3>
+<ul>
+<li>Volúmenes persistentes para datos (ej. MariaDB y WordPress).</li>
+<li>Crear y montar volúmenes desde <code>docker-compose.yml</code>.</li>
+</ul>
+<h3 id="redes-docker"><a class="wikilink" href="🌐 9. Redes Docker">🌐
+9. Redes Docker</a></h3>
+<ul>
+<li>Redes bridge personalizadas para conectar servicios.</li>
+<li>Definición en <code>docker-compose.yml</code>.</li>
+</ul>
+<h3 id="variables-de-entorno-y-docker-secrets"><a class="wikilink" href="🔐 10. Variables de entorno y Docker Secrets">🔐
+10. Variables de entorno y Docker Secrets</a></h3>
+<ul>
+<li>Crear archivo <code>.env</code>.</li>
+<li>Uso de variables con <code>${VARIABLE}</code> en
+<code>docker-compose.yml</code> y <code>Dockerfile</code>.</li>
+<li>Buenas prácticas de seguridad: <code>secrets</code>,
+<code>.gitignore</code>, evitar hardcoding de contraseñas.</li>
+</ul>
+<hr/>
+<!-- <h2 id="próximo-paso">🔹 Próximo paso</h2>
+<p>Cuando termines con este bloque, podrás empezar con:</p>
+<ul>
+<li>Crear el contenedor de NGINX (TLS incluido).</li>
+<li>Montar WordPress con PHP-FPM.</li>
+<li>Configurar MariaDB y enlazarla con WordPress.</li>
+<li>Automatizar el despliegue con Makefile.</li>
+</ul>
+<p>¿Quieres que prepare una guía práctica con ejercicios para cada tema
+del Bloque 1 o ya comenzamos con el punto 1: “¿Qué es Docker?”?</p> -->
+</body>
+</html>

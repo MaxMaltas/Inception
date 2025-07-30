@@ -1,0 +1,54 @@
+<html><head><meta charset="utf-8"/><title>💾 8. Volúmenes Docker</title>
+        <link rel="stylesheet" href="style.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    </head>
+    <body><a href="index.html" style="display:inline-block;margin-bottom:20px;padding:10px 15px;background:#2980b9;color:white;text-decoration:none;border-radius:5px;">⬅ Volver al índice</a>
+
+<h2>🧠 ¿Qué es un volumen?</h2>
+<p>Un <strong>volumen</strong> es un área del sistema de archivos gestionada por Docker para <strong>almacenar datos de manera persistente</strong>.</p>
+<blockquote>
+<p>Si eliminas un contenedor, sus datos desaparecen…<br/>
+  …a menos que los hayas montado en un <strong>volumen</strong>.</p>
+</blockquote>
+<hr/>
+<h3>📌 Tipos de volúmenes</h3>
+<ol>
+<li><strong>Anónimos</strong>: No tienen nombre. Se crean automáticamente y se borran al hacer <code>docker compose down</code>.</li>
+<li><strong>Nombrados</strong>: Les das un nombre y son reutilizables. <strong>Son los que debes usar en Inception.</strong></li>
+<li><strong>Bind mounts</strong>: Montan una ruta del host directamente (menos portables, más peligrosos).</li>
+</ol>
+<hr/>
+<h3>📦 Ejemplo en <code>docker-compose.yml</code></h3>
+<div class="codehilite">
+<pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mariadb</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./mariadb</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db-data:/var/lib/mysql</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">db-data</span><span class="p">:</span>
+</code></pre>
+</div>
+<p>Esto:</p>
+<ul>
+<li>Crea un volumen llamado <code>db-data</code>.</li>
+<li>Lo monta dentro del contenedor en <code>/var/lib/mysql</code> (donde MariaDB guarda la base de datos).</li>
+<li>Si reinicias o eliminas el contenedor, <strong>los datos persisten</strong>.</li>
+</ul>
+<hr/>
+<h3>✅ Comandos útiles</h3>
+<div class="codehilite">
+<pre><span></span><code>docker<span class="w"> </span>volume<span class="w"> </span>ls<span class="w">           </span><span class="c1"># Ver volúmenes existentes</span>
+docker<span class="w"> </span>volume<span class="w"> </span>inspect<span class="w"> </span>X<span class="w">    </span><span class="c1"># Ver detalles de un volumen</span>
+docker<span class="w"> </span>volume<span class="w"> </span>rm<span class="w"> </span>X<span class="w">         </span><span class="c1"># Eliminar un volumen</span>
+</code></pre>
+</div>
+<hr/>
+<h3>🧠 Volúmenes en Inception</h3>
+<ul>
+<li><strong>WordPress</strong> → debe tener un volumen donde se guarden los archivos del sitio (<code>/var/www/html</code>).</li>
+<li><strong>MariaDB</strong> → debe tener un volumen donde se almacene la base de datos (<code>/var/lib/mysql</code>).</li>
+<li>Se definen en el archivo <code>docker-compose.yml</code>, sección <code>volumes:</code>.</li>
+</ul>
+</body></html>
