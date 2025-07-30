@@ -3,12 +3,13 @@ FROM debian:bullseye
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt install -y \
-php php-mysqli curl dumb-init && \
+php-cli php-mysqli curl dumb-init && \
 apt clean
 
 WORKDIR /var/www/html
 
-COPY tools/adminer.php .
+COPY tools/adminer.php ./index.php
+# COPY tools/adminer.php ./index.php
 
 EXPOSE 8080
 
