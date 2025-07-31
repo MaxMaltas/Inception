@@ -11,7 +11,7 @@ if [ ! -f "$INIT_MARKER" ]; then
 	mysql_install_db --user=mysql --basedir=/usr --ldata=/var/lib/mysql
 # Inicia servicio en segundo plano
 	mysqld_safe --datadir=/var/lib/mysql & #--bind-adress=0.0.0.0 &
-	sleep 5
+	sleep 15
 
 	echo "> Verificando estado del servicio:"
 # service mysql status
@@ -35,11 +35,7 @@ if [ ! -f "$INIT_MARKER" ]; then
 	EOSQL
 
 	echo "> MariaDB listo y configurado "
-# mysql -e "CREATE DATABASE IF NOT EXIST \`${MYSQL_DATABASE}\`;"
-# mysql -e "CREATE USER IF NOT EXIST '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-# mysql -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';"
-# mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
-# mysql -e "FLUSH PRIVILEGES;"
+
 
 # Parar MariaDB
 # service mysql stop

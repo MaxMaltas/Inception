@@ -3,12 +3,12 @@
 # **************************************************************************** #
 
 NAME	= inception
-COMPOSE	= docker-compose -f ./srcs/docker-compose.yml
+COMPOSE	= docker compose -f ./srcs/docker-compose.yml
 VOLUME_PATH = /home/mmaltas-/data
 
 # **************************** REGLAS PRINCIPALES **************************** #
 
-.PHONY: fclean status down start stop bonus build all
+.PHONY: fclean info down start stop bonus build all
 
 all: create-folders
 	@echo "🛠️  Construyendo los servicios ..."
@@ -29,7 +29,7 @@ down:
 	@echo "🧨 Deteniendo y eliminan contenedores..."
 	$(COMPOSE) down
 
-status:
+info:
 	@echo "🐳 Mostrando contenedores..."
 	@docker ps
 
