@@ -1,0 +1,2 @@
+# Credenciales locales: se crean copiando srcs/.env.example
+srcs/.env
